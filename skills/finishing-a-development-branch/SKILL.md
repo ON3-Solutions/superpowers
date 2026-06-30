@@ -63,9 +63,13 @@ git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null
 
 Or ask: "This branch split from main - is that correct?"
 
-### Step 4: Present Options
+### Step 4: Choose the Completion Path
 
-**Normal repo and named-branch worktree — present exactly these 4 options:**
+**Autonomous mode (no human in the session):** do NOT present a menu or ask "which option?". Default to **Push and create a Pull Request** (Option 2 in a normal repo / Option 1 on detached HEAD) and proceed. Only choose a different path when the calling instructions explicitly require it (e.g. "do not open a PR"). Never wait for a human to pick.
+
+The menus below are the interactive form, kept for reference and for the rare interactive run:
+
+**Normal repo and named-branch worktree — these 4 options:**
 
 ```
 Implementation complete. What would you like to do?
@@ -74,11 +78,9 @@ Implementation complete. What would you like to do?
 2. Push and create a Pull Request
 3. Keep the branch as-is (I'll handle it later)
 4. Discard this work
-
-Which option?
 ```
 
-**Detached HEAD — present exactly these 3 options:**
+**Detached HEAD — these 3 options:**
 
 ```
 Implementation complete. You're on a detached HEAD (externally managed workspace).
@@ -86,8 +88,6 @@ Implementation complete. You're on a detached HEAD (externally managed workspace
 1. Push as new branch and create a Pull Request
 2. Keep as-is (I'll handle it later)
 3. Discard this work
-
-Which option?
 ```
 
 **Don't add explanation** - keep options concise.
@@ -243,9 +243,9 @@ git worktree prune  # Self-healing: clean up any stale registrations
 
 **Always:**
 - Verify tests before offering options
-- Detect environment before presenting menu
-- Present exactly 4 options (or 3 for detached HEAD)
-- Get typed confirmation for Option 4
+- Detect environment before deciding the completion path
+- In interactive runs, present exactly 4 options (or 3 for detached HEAD); in autonomous mode, default to opening a PR without asking (Step 4)
+- Get typed confirmation for Option 4 (interactive runs only)
 - Clean up worktree for Options 1 & 4 only
 - `cd` to main repo root before worktree removal
 - Run `git worktree prune` after removal

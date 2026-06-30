@@ -7,31 +7,35 @@ description: "You MUST use this before any creative work - creating features, bu
 
 Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
 
-Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design and get user approval.
+Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, produce the design.
+
+**Autonomous, non-interactive mode:** there is no human in the session to answer questions or approve steps. Wherever this skill says to get the user's approval, ask the user, or wait for their response, **you are the approver** — record the decision and proceed. Never stop or end the session waiting for a human; real validation happens later, at PR review. The design and spec work itself is still required — only the approval gates become automatic.
 
 <HARD-GATE>
-Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
+Do NOT take an implementation action until you have produced a design and approved it. The design step is NEVER skipped — but with no human in the loop the approval is YOURS to grant, so you grant it and proceed. This applies to EVERY project regardless of perceived simplicity.
 </HARD-GATE>
 
 ## Anti-Pattern: "This Is Too Simple To Need A Design"
 
-Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but you MUST present it and get approval.
+Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but you MUST still produce it and approve it yourself before implementing.
 
 ## Checklist
 
 You MUST create a task for each of these items and complete them in order:
 
 1. **Explore project context** — check files, docs, recent commits
-2. **Offer visual companion** (if topic will involve visual questions) — this is its own message, not combined with a clarifying question. See the Visual Companion section below.
+2. **Visual companion** — skipped in autonomous mode (no browser or human to consent). See the Visual Companion section below.
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
-5. **Present design** — in sections scaled to their complexity, get user approval after each section
+5. **Present design** — in sections scaled to their complexity; in autonomous mode you self-approve each section and continue (no human to ask)
 6. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
 7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-8. **User reviews written spec** — ask user to review the spec file before proceeding
+8. **Auto-approve the written spec** — record the self-approval and proceed (autonomous mode — no human review gate)
 9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
 ## Process Flow
+
+**Autonomous mode:** the `User approves design?` and `User reviews spec?` decision nodes below always resolve to the approved branch — you are the approver, so there is no revise-loop waiting on a human.
 
 ```dot
 digraph brainstorming {
@@ -87,7 +91,7 @@ digraph brainstorming {
 
 - Once you believe you understand what you're building, present the design
 - Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
-- Ask after each section whether it looks right so far
+- Check each section against the requirements yourself before moving on (no human to ask)
 - Cover: architecture, components, data flow, error handling, testing
 - Be ready to go back and clarify if something doesn't make sense
 
@@ -123,12 +127,8 @@ After writing the spec document, look at it with fresh eyes:
 
 Fix any issues inline. No need to re-review — just fix and move on.
 
-**User Review Gate:**
-After the spec review loop passes, ask the user to review the written spec before proceeding:
-
-> "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we start writing out the implementation plan."
-
-Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
+**Spec Approval (autonomous):**
+After the spec review loop passes, the spec is approved — you are the approver. Record in the spec that it was approved for autonomous execution, then proceed directly to writing-plans. Do not pause to ask a human to review it; the spec is validated downstream, at PR review.
 
 **Implementation:**
 
@@ -141,10 +141,12 @@ Wait for the user's response. If they request changes, make them and re-run the 
 - **Multiple choice preferred** - Easier to answer than open-ended when possible
 - **YAGNI ruthlessly** - Remove unnecessary features from all designs
 - **Explore alternatives** - Always propose 2-3 approaches before settling
-- **Incremental validation** - Present design, get approval before moving on
+- **Incremental validation** - Produce design, self-approve in autonomous mode, move on
 - **Be flexible** - Go back and clarify when something doesn't make sense
 
 ## Visual Companion
+
+> **Not used in autonomous mode.** The companion is browser-based and needs a human to consent and view it, so in non-interactive execution you skip it entirely and brainstorm text-only. The rest of this section applies only to interactive sessions.
 
 A browser-based companion for showing mockups, diagrams, and visual options during brainstorming. Available as a tool — not a mode. Accepting the companion means it's available for questions that benefit from visual treatment; it does NOT mean every question goes through the browser.
 

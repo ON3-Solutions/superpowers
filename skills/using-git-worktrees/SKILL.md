@@ -44,6 +44,23 @@ Has the user already indicated their worktree preference in your instructions? I
 
 Honor any existing declared preference without asking. If the user declines consent, work in place and skip to Step 3.
 
+## Step 0.5: Determine the Target Branch
+
+**Before creating anything, decide whether this work continues on an EXISTING branch or starts a new one.**
+
+Read your instructions for a branch to continue ("the feature is on `feat/x`", "continue on `fix/y`", "I already started this in `feat/z`"). Continuing work is the case that silently destroys effort: a fresh branch orphans commits that already exist and opens a second, competing pull request against the same work.
+
+```bash
+# Does the named branch already exist, locally or on the remote?
+git rev-parse --verify "$BRANCH_NAME" 2>/dev/null \
+  || git ls-remote --exit-code --heads origin "$BRANCH_NAME"
+```
+
+- **A branch was named in your instructions (or already exists):** it is the target branch. **Attach to it — never create a new one.** Any existing pull request for that branch gets updated, not replaced.
+- **No branch named and none exists:** create a new branch, as usual.
+
+**Carry this decision into Steps 1a and 1b — both create a NEW branch by default.**
+
 ## Step 1: Create Isolated Workspace
 
 **You have two mechanisms. Try them in this order.**
@@ -105,9 +122,19 @@ project=$(basename "$(git rev-parse --show-toplevel)")
 # For project-local: path="$LOCATION/$BRANCH_NAME"
 # For global: path="~/.config/superpowers/worktrees/$project/$BRANCH_NAME"
 
+# NEW branch (Step 0.5 found none): -b creates it.
 git worktree add "$path" -b "$BRANCH_NAME"
+
+# EXISTING branch (Step 0.5 named one): NO -b. Passing -b here creates a
+# divergent branch and orphans the work already committed on the original.
+git fetch origin "$BRANCH_NAME" 2>/dev/null
+git worktree add "$path" "$BRANCH_NAME" \
+  || git worktree add --track -b "$BRANCH_NAME" "$path" "origin/$BRANCH_NAME"
+
 cd "$path"
 ```
+
+**About the `||` fallback:** when the branch exists only on the remote, `git worktree add <path> <branch>` already resolves it and sets up tracking on its own — as long as exactly one remote has that name. The fallback covers the ambiguous case (several remotes carrying the same branch name), where the first form errors out.
 
 **Sandbox fallback:** If `git worktree add` fails with a permission error (sandbox denial), tell the user the sandbox blocked worktree creation and you're working in the current directory instead. Then run setup and baseline tests in place.
 
@@ -170,6 +197,11 @@ Ready to implement <feature-name>
 | No package.json/Cargo.toml | Skip dependency install |
 
 ## Common Mistakes
+
+### Branching away from work that already exists
+
+- **Problem:** Your instructions named a branch to continue, and you created a new one anyway — orphaning the commits already there and opening a second pull request that competes with the first
+- **Fix:** Step 0.5 decides the target branch BEFORE Step 1. On an existing branch, `git worktree add "$path" "$BRANCH_NAME"` — no `-b`
 
 ### Fighting the harness
 

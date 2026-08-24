@@ -31,7 +31,8 @@ You MUST create a task for each of these items and complete them in order:
 6. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
 7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 8. **Auto-approve the written spec** — record the self-approval and proceed (autonomous mode — no human review gate)
-9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+9. **Map change impacts** — before planning any feature, fix, or refactor in a codebase, use `superpowers:analyzing-change-impact`; new code can still affect existing integrations and user flows
+10. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
 ## Process Flow
 
@@ -49,6 +50,7 @@ digraph brainstorming {
     "Write design doc" [shape=box];
     "Spec self-review\n(fix inline)" [shape=box];
     "User reviews spec?" [shape=diamond];
+    "Analyze change impact" [shape=box];
     "Invoke writing-plans skill" [shape=doublecircle];
 
     "Explore project context" -> "Visual questions ahead?";
@@ -63,11 +65,12 @@ digraph brainstorming {
     "Write design doc" -> "Spec self-review\n(fix inline)";
     "Spec self-review\n(fix inline)" -> "User reviews spec?";
     "User reviews spec?" -> "Write design doc" [label="changes requested"];
-    "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
+    "User reviews spec?" -> "Analyze change impact" [label="approved codebase change"];
+    "Analyze change impact" -> "Invoke writing-plans skill";
 }
 ```
 
-**The terminal state is invoking writing-plans.** Do NOT invoke frontend-design, mcp-builder, or any other implementation skill. The ONLY skill you invoke after brainstorming is writing-plans.
+**The terminal state is invoking writing-plans.** For any feature, fix, or refactor in a codebase, first invoke `superpowers:analyzing-change-impact`, then writing-plans. Do NOT invoke frontend-design, mcp-builder, or any other implementation skill.
 
 ## The Process
 
@@ -128,12 +131,19 @@ After writing the spec document, look at it with fresh eyes:
 Fix any issues inline. No need to re-review — just fix and move on.
 
 **Spec Approval (autonomous):**
-After the spec review loop passes, the spec is approved — you are the approver. Record in the spec that it was approved for autonomous execution, then proceed directly to writing-plans. Do not pause to ask a human to review it; the spec is validated downstream, at PR review.
+After the spec review loop passes, the spec is approved — you are the approver.
+Record in the spec that it was approved for autonomous execution. For every
+feature, fix, or refactor in a codebase, invoke
+`superpowers:analyzing-change-impact` and pass its map to writing-plans. This
+includes changes implemented entirely in new files.
+Do not pause to ask a human to review it; the spec is validated downstream, at
+PR review.
 
 **Implementation:**
 
+- For any feature, fix, or refactor in a codebase, use `superpowers:analyzing-change-impact` before creating the plan. Include the impact map, assessment, decisions, and evidence in the plan context.
 - Invoke the writing-plans skill to create a detailed implementation plan
-- Do NOT invoke any other skill. writing-plans is the next step.
+- After specification approval, analyzing-change-impact comes before writing-plans for codebase changes, including new features.
 
 ## Key Principles
 

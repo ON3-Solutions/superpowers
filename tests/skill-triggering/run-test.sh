@@ -5,10 +5,10 @@
 # Tests whether Claude triggers a skill based on a natural prompt
 # (without explicitly mentioning the skill)
 
-set -e
+set -euo pipefail
 
-SKILL_NAME="$1"
-PROMPT_FILE="$2"
+SKILL_NAME="${1:-}"
+PROMPT_FILE="${2:-}"
 MAX_TURNS="${3:-3}"
 
 if [ -z "$SKILL_NAME" ] || [ -z "$PROMPT_FILE" ]; then
@@ -45,12 +45,39 @@ cd "$OUTPUT_DIR"
 
 echo "Plugin dir: $PLUGIN_DIR"
 echo "Running claude -p with naive prompt..."
+set +e
 timeout 300 claude -p "$PROMPT" \
     --plugin-dir "$PLUGIN_DIR" \
     --dangerously-skip-permissions \
     --max-turns "$MAX_TURNS" \
+    --verbose \
     --output-format stream-json \
-    > "$LOG_FILE" 2>&1 || true
+    > "$LOG_FILE" 2>&1
+CLAUDE_EXIT=$?
+set -e
+
+if jq -e -s '
+    any(.[];
+        (.type == "rate_limit_event" and .rate_limit_info.status == "rejected")
+        or (.type == "result" and .is_error == true and .api_error_status == 429)
+    )
+' "$LOG_FILE" >/dev/null 2>&1 || grep -Fxq \
+    'Error: When using --print, --output-format=stream-json requires --verbose' \
+    "$LOG_FILE" || [ "$CLAUDE_EXIT" -eq 124 ]; then
+    echo ""
+    echo "=== Infrastructure Result ==="
+    echo "⚠️  INFRASTRUCTURE: Claude CLI did not complete the agent run (exit $CLAUDE_EXIT)"
+    echo "Full log: $LOG_FILE"
+    exit 2
+fi
+
+if [ "$CLAUDE_EXIT" -ne 0 ]; then
+    echo ""
+    echo "=== Runner Error ==="
+    echo "❌ RUNNER_ERROR: Claude CLI exited unexpectedly (exit $CLAUDE_EXIT)"
+    echo "Full log: $LOG_FILE"
+    exit 3
+fi
 
 echo ""
 echo "=== Results ==="

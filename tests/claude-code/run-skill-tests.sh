@@ -61,6 +61,8 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Integration Tests (use --integration):"
             echo "  test-subagent-driven-development-integration.sh  Full workflow execution"
+            echo "  test-analyzing-change-impact.sh  Impact analysis across consumers"
+            echo "  test-code-quality-impact-handoff.sh  SDD review map handoff"
             exit 0
             ;;
         *)
@@ -80,6 +82,8 @@ tests=(
 integration_tests=(
     "test-subagent-driven-development-integration.sh"
     "test-requesting-code-review.sh"
+    "test-analyzing-change-impact.sh"
+    "test-code-quality-impact-handoff.sh"
 )
 
 # Add integration tests if requested

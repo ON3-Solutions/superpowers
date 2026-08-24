@@ -22,6 +22,14 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
 
+## Change Impact
+
+For every feature, fix, or refactor in a codebase, use
+`superpowers:analyzing-change-impact` before defining tasks. Include the
+`impact | evidence file:line | assessment | decision or required change | test`
+map in the plan. Every mapped item must become an explicit task, step, or
+verification; preserve inferences as pending validations, not facts.
+
 ## File Structure
 
 Before defining tasks, map out which files will be created or modified and what each one is responsible for. This is where decomposition decisions get locked in.
@@ -128,6 +136,8 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 **2. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" section above. Fix them.
 
 **3. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
+
+**4. Impact reconciliation:** For every codebase change, compare the impact map with the planned files and tests. Every mapped effect needs an assessment and a planned change, an explicitly accepted effect, or a validation step.
 
 If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
 

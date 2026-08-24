@@ -20,6 +20,10 @@ Task tool (general-purpose):
 
     {PLAN_OR_REQUIREMENTS}
 
+    ## Change Impact Map
+
+    {CHANGE_IMPACT_MAP}
+
     ## Git Range to Review
 
     **Base:** {BASE_SHA}
@@ -36,6 +40,12 @@ Task tool (general-purpose):
     - Does the implementation match the plan / requirements?
     - Are deviations justified improvements, or problematic departures?
     - Is all planned functionality present?
+
+    **Impact reconciliation:**
+    - Does the diff cover every applicable mapped impact, or justify why it does not?
+    - Did the change introduce an unlisted consumer, contract, data, operational, or compatibility risk?
+    - Does every effect have a supported assessment and an explicit decision?
+    - Are evidence and inferences clearly separated, with tests at the affected boundary?
 
     **Code quality:**
     - Clean separation of concerns?
@@ -124,6 +134,7 @@ Task tool (general-purpose):
 **Placeholders:**
 - `{DESCRIPTION}` — brief summary of what was built
 - `{PLAN_OR_REQUIREMENTS}` — what it should do (plan file path, task text, or requirements)
+- `{CHANGE_IMPACT_MAP}` — reconciled map of impact, evidence, required changes, and tests
 - `{BASE_SHA}` — starting commit
 - `{HEAD_SHA}` — ending commit
 

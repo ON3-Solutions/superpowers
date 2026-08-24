@@ -14,6 +14,7 @@ SKILLS=(
     "dispatching-parallel-agents"
     "executing-plans"
     "requesting-code-review"
+    "analyzing-change-impact"
 )
 
 echo "=== Running Skill Triggering Tests ==="
@@ -21,6 +22,8 @@ echo ""
 
 PASSED=0
 FAILED=0
+INFRASTRUCTURE=0
+RUNNER_ERRORS=0
 RESULTS=()
 
 for skill in "${SKILLS[@]}"; do
@@ -33,9 +36,20 @@ for skill in "${SKILLS[@]}"; do
 
     echo "Testing: $skill"
 
-    if "$SCRIPT_DIR/run-test.sh" "$skill" "$prompt_file" 3 2>&1 | tee /tmp/skill-test-$skill.log; then
+    set +e
+    "$SCRIPT_DIR/run-test.sh" "$skill" "$prompt_file" 3 2>&1 | tee /tmp/skill-test-$skill.log
+    test_exit=${PIPESTATUS[0]}
+    set -e
+
+    if [ "$test_exit" -eq 0 ]; then
         PASSED=$((PASSED + 1))
         RESULTS+=("✅ $skill")
+    elif [ "$test_exit" -eq 2 ]; then
+        INFRASTRUCTURE=$((INFRASTRUCTURE + 1))
+        RESULTS+=("⚠️ $skill (infrastructure)")
+    elif [ "$test_exit" -eq 3 ]; then
+        RUNNER_ERRORS=$((RUNNER_ERRORS + 1))
+        RESULTS+=("❌ $skill (runner error)")
     else
         FAILED=$((FAILED + 1))
         RESULTS+=("❌ $skill")
@@ -54,7 +68,9 @@ done
 echo ""
 echo "Passed: $PASSED"
 echo "Failed: $FAILED"
+echo "Infrastructure: $INFRASTRUCTURE"
+echo "Runner errors: $RUNNER_ERRORS"
 
-if [ $FAILED -gt 0 ]; then
+if [ $FAILED -gt 0 ] || [ $INFRASTRUCTURE -gt 0 ] || [ $RUNNER_ERRORS -gt 0 ]; then
     exit 1
 fi

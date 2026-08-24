@@ -36,6 +36,7 @@ Use Task tool with `general-purpose` type, fill template at `code-reviewer.md`
 **Placeholders:**
 - `{DESCRIPTION}` - Brief summary of what you built
 - `{PLAN_OR_REQUIREMENTS}` - What it should do
+- `{CHANGE_IMPACT_MAP}` - Reconciled impact map with evidence, assessment, decisions, and tests for every feature, fix, or refactor
 - `{BASE_SHA}` - Starting commit
 - `{HEAD_SHA}` - Ending commit
 
@@ -58,6 +59,7 @@ HEAD_SHA=$(git rev-parse HEAD)
 [Dispatch code reviewer subagent]
   DESCRIPTION: Added verifyIndex() and repairIndex() with 4 issue types
   PLAN_OR_REQUIREMENTS: Task 2 from docs/superpowers/plans/deployment-plan.md
+  CHANGE_IMPACT_MAP: Consumer and operational impact map reconciled with the diff
   BASE_SHA: a7981ec
   HEAD_SHA: 3df7661
 
@@ -86,6 +88,10 @@ You: [Fix progress indicators]
 **Ad-Hoc Development:**
 - Review before merge
 - Review when stuck
+
+**Change-impact review:**
+- Use `superpowers:analyzing-change-impact` before review for every feature, fix, or refactor, including changes made only in new files
+- Give the reviewer the map reconciled with the diff and ask them to find missing effects, challenge assessments, and verify each decision
 
 ## Red Flags
 

@@ -12,9 +12,15 @@ Task tool (general-purpose):
 
   DESCRIPTION: [task summary, from implementer's report]
   PLAN_OR_REQUIREMENTS: Task N from [plan-file]
+  CHANGE_IMPACT_MAP: {CHANGE_IMPACT_MAP}
   BASE_SHA: [commit before task]
   HEAD_SHA: [current commit]
 ```
+
+For every feature, fix, or refactor in a codebase, replace
+`{CHANGE_IMPACT_MAP}` with the reconciled map produced by
+`superpowers:analyzing-change-impact`, including assessments and decisions.
+Never leave the placeholder literal in the review prompt.
 
 **In addition to standard code quality concerns, the reviewer should check:**
 - Does each file have one clear responsibility with a well-defined interface?

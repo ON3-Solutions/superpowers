@@ -99,6 +99,12 @@ Skip any step = lying, not verifying
 ❌ "Tests pass, phase complete"
 ```
 
+**Impact of every codebase change:**
+```
+✅ Reconcile impact map → compare with diff → repeat searches for contracts and consumers → run mapped tests
+❌ "The main file changed, so consumers are covered"
+```
+
 **Agent delegation:**
 ```
 ✅ Agent reports success → Check VCS diff → Verify changes → Report actual state
@@ -123,6 +129,7 @@ From 24 failure memories:
 - Committing, PR creation, task completion
 - Moving to next task
 - Delegating to agents
+- Completing a feature, fix, or refactor without reconciling its impact map with the diff and recording whether each effect is acceptable
 
 **Rule applies to:**
 - Exact phrases
